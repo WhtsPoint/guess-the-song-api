@@ -1,0 +1,50 @@
+services:
+  database:
+    container_name: database
+    image: mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - 3306:3306
+    volumes:
+      - ./.mysql/data:/var/lib/mysql
+    networks:
+      - app
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      PMA_HOST: database
+    networks:
+      - app
+    depends_on:
+      - database
+  nginx:
+    build: .nginx
+    restart: always
+    environment:
+      - APP_ENV=dev
+    volumes:
+      - .:/var/www/app
+    ports:
+      - 80:80
+    networks:
+      - app
+  php:
+    build:
+      dockerfile: dev.Dockerfile
+    volumes:
+      - .:/var/www/app
+      - ./xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+    environment:
+      - APP_ENV=dev
+    depends_on:
+      - database
+    networks:
+      - app
+networks:
+  app:
+    driver: bridge
