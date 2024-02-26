@@ -2,7 +2,7 @@
 
 namespace App\Utils\Domain\Entity;
 
-use App\Utils\Domain\Events\DomainEvent;
+use App\Utils\Domain\Bus\Events\DomainEvent;
 
 abstract class RootAggregate
 {

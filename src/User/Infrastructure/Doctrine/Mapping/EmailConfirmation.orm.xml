@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping">
+    <embeddable name="App\User\Domain\Entity\EmailConfirmation">
+        <field name="isConfirmed" type="boolean" />
+        <field name="email" type="email" nullable="true" />
+        <field name="code" nullable="true" />
+        <field name="expiredAt" nullable="true" type="datetime_immutable" />
+    </embeddable>
+</doctrine-mapping>

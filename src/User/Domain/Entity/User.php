@@ -2,16 +2,15 @@
 
 namespace App\User\Domain\Entity;
 
-use App\User\Domain\Helper\PasswordHasherInterface;
-use App\User\Domain\Dto\EmailConfirmation;
-use App\User\Domain\Events\OnEmailConfirmationRefreshed;
+use App\User\Domain\Bus\Events\OnEmailConfirmationRefreshed;
 use App\User\Domain\Exception\EmailAlreadyConfirmedException;
 use App\User\Domain\Exception\InvalidConfirmationCodeException;
+use App\User\Domain\Helper\PasswordHasherInterface;
 use App\Utils\Domain\Entity\RootAggregate;
 use App\Utils\Domain\ValueObject\Email;
 use App\Utils\Domain\ValueObject\Uuid;
+use DateTimeImmutable;
 use Exception;
-use InvalidArgumentException;
 
 class User extends RootAggregate
 {
@@ -57,11 +56,21 @@ class User extends RootAggregate
         return $this->emailConfirmation?->getEmail();
     }
 
+    public function getConfirmationExpiredAt(): DateTimeImmutable
+    {
+        return $this->emailConfirmation?->getExpiredAt();
+    }
+
     /**
      * @throws Exception
      */
-    public function setEmail(Email $email): void
+    public function setEmail(?Email $email): void
     {
+        if ($email === null) {
+            $this->emailConfirmation = null;
+            return;
+        }
+
         $this->emailConfirmation = new EmailConfirmation(
             $email,
             false
@@ -81,16 +90,10 @@ class User extends RootAggregate
     /**
      * @throws EmailAlreadyConfirmedException
      * @throws InvalidConfirmationCodeException
-     * @throws Exception
      */
     public function confirm(string $code): void
     {
-        try {
-            $this->emailConfirmation = $this->emailConfirmation->confirm($code);
-        } catch (EmailAlreadyConfirmedException|InvalidArgumentException $exception) {
-            $this->sendEmailEvent($this->emailConfirmation);
-            throw $exception;
-        }
+        $this->emailConfirmation = $this->emailConfirmation->confirm($code);
     }
 
     private function sendEmailEvent(EmailConfirmation $confirmation): void {

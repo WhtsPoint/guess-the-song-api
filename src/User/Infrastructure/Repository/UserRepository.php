@@ -6,6 +6,7 @@ use App\User\Domain\Entity\User;
 use App\User\Domain\Exception\UserNotFoundException;
 use App\User\Domain\Repository\UserRepositoryInterface;
 use App\Utils\Domain\Repository\BaseRepository;
+use App\Utils\Domain\ValueObject\Uuid;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
@@ -24,15 +25,15 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         $this->entityManager->persist($user);
     }
 
-    public function findUserById(string $id): ?User
+    public function findUserById(Uuid $id): ?User
     {
-        return $this->repository->find(['id' => $id]);
+        return $this->repository->find(new Uuid($id));
     }
 
     /**
      * @throws UserNotFoundException
      */
-    public function getUserByID(string $id): User
+    public function getUserByID(Uuid $id): User
     {
         $user = $this->findUserById($id);
 
@@ -46,5 +47,10 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     public function delete(User $user): void
     {
         $this->entityManager->detach($user);
+    }
+
+    public function isExistsWithUsername(string $username): bool
+    {
+        return $this->repository->count(['username' => $username]) !== 0;
     }
 }

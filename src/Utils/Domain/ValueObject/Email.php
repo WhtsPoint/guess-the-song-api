@@ -2,7 +2,7 @@
 
 namespace App\Utils\Domain\ValueObject;
 
-class Email
+class Email implements ValueObjectInterface
 {
     public const REGEX = '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/';
     private string $value;

@@ -6,7 +6,7 @@ use InvalidArgumentException;
 use Symfony\Component\Uid\Uuid as SymfonyUuid;
 use Symfony\Component\Uid\UuidV4;
 
-class Uuid
+class Uuid implements ValueObjectInterface
 {
     private string $value;
 
@@ -24,6 +24,11 @@ class Uuid
     }
 
     public function get(): string
+    {
+        return $this->value;
+    }
+
+    public function __toString(): string
     {
         return $this->value;
     }

@@ -18,8 +18,8 @@ class UserController extends AbstractController
 
     #[Route(path: '/api/user')]
     public function test(): JsonResponse {
-        $response = $this->service->create(new UserCreationDto(
-            'told ya',
+        $response = $this->service->createAndCommit(new UserCreationDto(
+            bin2hex(random_bytes(10)),
             'never',
             new Email('ubluewolfu@gmail.com')
         ));
