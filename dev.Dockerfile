@@ -5,4 +5,5 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && docker-php-ext-install pdo_mysql soap zip opcache gd intl
 
 RUN pecl install xdebug && docker-php-ext-enable xdebug
+RUN pecl install redis && docker-php-ext-enable redis
 

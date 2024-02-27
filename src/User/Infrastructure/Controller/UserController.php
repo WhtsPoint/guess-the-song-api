@@ -9,7 +9,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
-
 class UserController extends AbstractController
 {
     public function __construct(
@@ -21,7 +20,7 @@ class UserController extends AbstractController
         $response = $this->service->createAndCommit(new UserCreationDto(
             bin2hex(random_bytes(10)),
             'never',
-            new Email('ubluewolfu@gmail.com')
+            new Email('whtspoint@gmail.com')
         ));
 
         return $this->json($response);
