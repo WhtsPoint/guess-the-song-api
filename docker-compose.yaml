@@ -52,11 +52,9 @@ services:
       - "6379:6379"
     volumes:
       - ./.redis/root:/root/redis
-      - ./redis.conf:/etc/redis/redis.conf
+    command: redis-server --requirepass root
     environment:
-      - REDIS_PASSWORD=root
       - REDIS_PORT=6379
-      - REDIS_DATABASES=16
     networks:
       - app
 networks:
