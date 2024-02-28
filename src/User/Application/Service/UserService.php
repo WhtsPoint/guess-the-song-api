@@ -5,7 +5,7 @@ namespace App\User\Application\Service;
 use App\User\Application\Dto\UserCreationDto;
 use App\User\Application\Dto\UserCreationResultDto;
 use App\User\Domain\Entity\User;
-use App\User\Domain\Exception\UserWithUsernameExists;
+use App\User\Domain\Exception\UserWithUsernameExistsException;
 use App\User\Domain\Factory\UserFactory;
 use App\User\Domain\Repository\UserRepositoryInterface;
 use App\Utils\Application\Service\BaseService;
@@ -20,12 +20,12 @@ class UserService extends BaseService
     ) {}
 
     /**
-     * @throws UserWithUsernameExists
+     * @throws UserWithUsernameExistsException
      */
     public function create(UserCreationDto $dto): User
     {
         if ($this->repository->isExistsWithUsername($dto->username)) {
-            throw new UserWithUsernameExists();
+            throw new UserWithUsernameExistsException();
         }
 
         $user = $this->factory->create(
@@ -40,7 +40,7 @@ class UserService extends BaseService
     }
 
     /**
-     * @throws UserWithUsernameExists
+     * @throws UserWithUsernameExistsException
      */
     public function createAndCommit(UserCreationDto $dto): UserCreationResultDto
     {

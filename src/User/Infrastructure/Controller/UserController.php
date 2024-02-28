@@ -4,6 +4,8 @@ namespace App\User\Infrastructure\Controller;
 
 use App\User\Application\Dto\UserCreationDto;
 use App\User\Application\Service\UserService;
+use App\User\Domain\Exception\UserWithUsernameExistsException;
+use App\User\Infrastructure\Exception\HttpUserWithUsernameExistsException;
 use App\Utils\Domain\ValueObject\Email;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,12 +19,15 @@ class UserController extends AbstractController
 
     #[Route(path: '/api/user')]
     public function test(): JsonResponse {
-        $response = $this->service->createAndCommit(new UserCreationDto(
-            bin2hex(random_bytes(10)),
-            'never',
-            new Email('whtspoint@gmail.com')
-        ));
-
+        try {
+            $response = $this->service->createAndCommit(new UserCreationDto(
+                'a',
+                'never',
+                new Email('whtspoint@gmail.com')
+            ));
+        } catch (UserWithUsernameExistsException) {
+            throw new HttpUserWithUsernameExistsException();
+        }
         return $this->json($response);
     }
 }
