@@ -9,7 +9,7 @@ use App\Utils\Infrastructure\Validation\Serializer\ValidationErrorsSerializerInt
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-abstract class RequestDataResolver
+class RequestDataResolver
 {
     public function __construct(
         private ClassMapperInterface $classMapper,

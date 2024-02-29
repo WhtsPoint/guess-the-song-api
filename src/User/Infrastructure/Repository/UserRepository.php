@@ -33,7 +33,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     /**
      * @throws UserNotFoundException
      */
-    public function getUserByID(Uuid $id): User
+    public function getUserById(Uuid $id): User
     {
         $user = $this->findUserById($id);
 

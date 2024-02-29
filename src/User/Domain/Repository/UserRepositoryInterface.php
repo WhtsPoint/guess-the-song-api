@@ -10,9 +10,12 @@ interface UserRepositoryInterface
 {
     public function create(User $user): void;
     public function findUserById(Uuid $id): ?User;
-    public function getUserByID(Uuid $id): User;
+    /**
+     * @throws UserNotFoundException
+     */
+    public function getUserById(Uuid $id): User;
     public function isExistsWithUsername(string $username): bool;
-        /**
+    /**
      * @throws UserNotFoundException
      */
     public function delete(User $user): void;
