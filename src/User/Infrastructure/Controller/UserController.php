@@ -12,11 +12,11 @@ use App\User\Infrastructure\Exception\HttpUserNotFoundException;
 use App\User\Infrastructure\Exception\HttpUserWithUsernameExistsException;
 use App\Utils\Domain\ValueObject\Email;
 use App\Utils\Domain\ValueObject\Uuid;
-use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\ValueResolver;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 
 class UserController extends AbstractController
 {
@@ -41,22 +41,15 @@ class UserController extends AbstractController
         return $this->json($response);
     }
 
-    #[Route(path: '/api/user/{id}',  methods: 'GET')]
+    #[Route(path: '/api/user/{id}', requirements: ['id' => Requirement::UUID_V4],  methods: 'GET')]
     public function getById(string $id): JsonResponse
     {
         try {
-            try {
-                $uuid = new Uuid($id);
-            } catch (InvalidArgumentException) {
-                throw new UserNotFoundException();
-            }
+            $userData = $this->repository->getPublicDataById(new Uuid($id));
 
-            $user = $this->repository->getUserByID($uuid);
-
-            return $this->json($user);
+            return $this->json($userData);
         } catch (UserNotFoundException) {
             throw new HttpUserNotFoundException();
         }
     }
-
 }

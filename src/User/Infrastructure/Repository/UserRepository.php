@@ -2,6 +2,7 @@
 
 namespace App\User\Infrastructure\Repository;
 
+use App\User\Domain\Entity\PublicUserData;
 use App\User\Domain\Entity\User;
 use App\User\Domain\Exception\UserNotFoundException;
 use App\User\Domain\Repository\UserRepositoryInterface;
@@ -52,5 +53,25 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     public function isExistsWithUsername(string $username): bool
     {
         return $this->repository->count(['username' => $username]) !== 0;
+    }
+
+    /**
+     * @throws UserNotFoundException
+     */
+    public function getPublicDataById(Uuid $id): PublicUserData
+    {
+        $publicData = $this->entityManager
+            ->createQuery(
+                'SELECT NEW App\User\Domain\Entity\PublicUserData(u.id, u.username, u.emailConfirmation.email, u.emailConfirmation.isConfirmed)
+                FROM App\User\Domain\Entity\User u
+                WHERE u.id = :id'
+            )->setParameter('id', $id)
+            ->getOneOrNullResult();
+
+        if ($publicData === null) {
+            throw new UserNotFoundException();
+        }
+
+        return $publicData;
     }
 }
