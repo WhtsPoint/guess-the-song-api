@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class UserCreationDataDto
 {
     #[Assert\NotBlank]
-    public int $username;
+    public string $username;
     #[Assert\NotBlank]
     public string $password;
     #[Assert\NotBlank]

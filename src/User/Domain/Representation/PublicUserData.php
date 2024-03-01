@@ -1,6 +1,6 @@
 <?php
 
-namespace App\User\Domain\Entity;
+namespace App\User\Domain\Representation;
 
 use App\Utils\Domain\ValueObject\Email;
 use App\Utils\Domain\ValueObject\Uuid;

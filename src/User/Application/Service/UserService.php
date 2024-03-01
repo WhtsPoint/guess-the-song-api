@@ -5,11 +5,13 @@ namespace App\User\Application\Service;
 use App\User\Application\Dto\UserCreationDto;
 use App\User\Application\Dto\UserCreationResultDto;
 use App\User\Domain\Entity\User;
+use App\User\Domain\Exception\UserNotFoundException;
 use App\User\Domain\Exception\UserWithUsernameExistsException;
 use App\User\Domain\Factory\UserFactory;
 use App\User\Domain\Repository\UserRepositoryInterface;
 use App\Utils\Application\Service\BaseService;
 use App\Utils\Domain\Repository\FlusherInterface;
+use App\Utils\Domain\ValueObject\Uuid;
 
 class UserService extends BaseService
 {
@@ -48,5 +50,15 @@ class UserService extends BaseService
         $this->flusher->flush();
 
         return new UserCreationResultDto($user->getId());
+    }
+
+    /**
+     * @throws UserNotFoundException
+     */
+    public function deleteById(Uuid $id): void
+    {
+        $user = $this->repository->getById($id);
+        $this->repository->delete($user);
+        $this->flusher->flush();
     }
 }

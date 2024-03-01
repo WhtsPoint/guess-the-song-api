@@ -42,12 +42,24 @@ class UserController extends AbstractController
     }
 
     #[Route(path: '/api/user/{id}', requirements: ['id' => Requirement::UUID_V4],  methods: 'GET')]
-    public function getById(string $id): JsonResponse
+    public function getPublicDataById(string $id): JsonResponse
     {
         try {
             $userData = $this->repository->getPublicDataById(new Uuid($id));
 
             return $this->json($userData);
+        } catch (UserNotFoundException) {
+            throw new HttpUserNotFoundException();
+        }
+    }
+
+    #[Route(path: '/api/user/{id}', requirements: ['id' => Requirement::UUID_V4], methods: 'DELETE')]
+    public function deleteById(string $id): JsonResponse
+    {
+        try {
+            $this->service->deleteById(new Uuid($id));
+
+            return $this->json([], 204);
         } catch (UserNotFoundException) {
             throw new HttpUserNotFoundException();
         }

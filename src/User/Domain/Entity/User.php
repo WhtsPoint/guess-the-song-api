@@ -6,6 +6,7 @@ use App\User\Domain\Bus\Events\OnEmailConfirmationRefreshed;
 use App\User\Domain\Exception\EmailAlreadyConfirmedException;
 use App\User\Domain\Exception\InvalidConfirmationCodeException;
 use App\User\Domain\Helper\PasswordHasherInterface;
+use App\User\Domain\Type\Role;
 use App\Utils\Domain\Entity\RootAggregate;
 use App\Utils\Domain\ValueObject\Email;
 use App\Utils\Domain\ValueObject\Uuid;
@@ -17,6 +18,7 @@ class User extends RootAggregate
     private Uuid $id;
     private ?string $password = null;
     private ?EmailConfirmation $emailConfirmation = null;
+    private array $roles = [];
 
     public function __construct(
         private string $username
@@ -44,11 +46,11 @@ class User extends RootAggregate
         $this->password = $hasher->hash($password);
     }
 
-    public function isPasswordValid(string $hash, PasswordHasherInterface $hasher): bool
+    public function isPasswordValid(string $password, PasswordHasherInterface $hasher): bool
     {
         if ($this->password === null) return true;
 
-        return $hasher->isValid($this->password, $hash);
+        return $hasher->isValid($password, $this->password);
     }
 
     public function getEmail(): ?Email
@@ -102,5 +104,14 @@ class User extends RootAggregate
             $confirmation->getEmail(),
             $confirmation->getCode()
         ));
+    }
+
+    public function getRoles(): array
+    {
+        return $this->roles;
+    }
+
+    public function addRole(Role $role): void
+    {
     }
 }

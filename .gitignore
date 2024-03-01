@@ -9,6 +9,9 @@
 /vendor/
 ###< symfony/framework-bundle ###
 
+keys/*
+!keys/.gitignore
+
 .mysql
 .nginx
 .idea

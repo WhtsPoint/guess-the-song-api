@@ -2,6 +2,7 @@
 
 namespace App\User\Domain\Exception;
 
-use App\Utils\Domain\Exception\DomainException;
+use App\Utils\Domain\Exception\DomainExceptionInterface;
+use Exception;
 
-class EmailAlreadyConfirmedException extends DomainException {}
+class EmailAlreadyConfirmedException extends Exception implements DomainExceptionInterface {}

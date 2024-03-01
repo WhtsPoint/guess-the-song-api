@@ -2,6 +2,7 @@
 
 namespace App\User\Domain\Exception;
 
-use App\Utils\Domain\Exception\DomainException;
+use App\Utils\Domain\Exception\DomainExceptionInterface;
+use Exception;
 
-class UserWithUsernameExistsException extends DomainException {}
+class UserWithUsernameExistsException extends Exception implements DomainExceptionInterface {}

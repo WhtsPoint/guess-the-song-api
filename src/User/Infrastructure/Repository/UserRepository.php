@@ -2,10 +2,10 @@
 
 namespace App\User\Infrastructure\Repository;
 
-use App\User\Domain\Entity\PublicUserData;
 use App\User\Domain\Entity\User;
 use App\User\Domain\Exception\UserNotFoundException;
 use App\User\Domain\Repository\UserRepositoryInterface;
+use App\User\Domain\Representation\PublicUserData;
 use App\Utils\Domain\Repository\BaseRepository;
 use App\Utils\Domain\ValueObject\Uuid;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,7 +26,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         $this->entityManager->persist($user);
     }
 
-    public function findUserById(Uuid $id): ?User
+    public function findById(Uuid $id): ?User
     {
         return $this->repository->find(new Uuid($id));
     }
@@ -34,9 +34,9 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     /**
      * @throws UserNotFoundException
      */
-    public function getUserById(Uuid $id): User
+    public function getById(Uuid $id): User
     {
-        $user = $this->findUserById($id);
+        $user = $this->findById($id);
 
         if ($user === null) {
             throw new UserNotFoundException();
@@ -47,7 +47,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
     public function delete(User $user): void
     {
-        $this->entityManager->detach($user);
+        $this->entityManager->remove($user);
     }
 
     public function isExistsWithUsername(string $username): bool
@@ -73,5 +73,24 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         }
 
         return $publicData;
+    }
+
+    public function findByUsername(string $username): ?User
+    {
+        return $this->repository->findOneBy(['username' => $username]);
+    }
+
+    /**
+     * @throws UserNotFoundException
+     */
+    public function getByUsername(string $username): User
+    {
+        $user = $this->findByUsername($username);
+
+        if ($user === null) {
+            throw new UserNotFoundException();
+        }
+
+        return $user;
     }
 }
