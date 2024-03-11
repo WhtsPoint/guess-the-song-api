@@ -18,6 +18,7 @@ class JWT implements JWTInterface
 {
     public const ACCESS_SUB = 'auth_access';
     public const REFRESH_SUB = 'auth_refresh';
+    public const ALG = 'RS256';
     private OpenSSLAsymmetricKey $privateKey;
     private Key $publicKey;
 
@@ -27,6 +28,12 @@ class JWT implements JWTInterface
     {
         $this->privateKey = openssl_get_privatekey(
             file_get_contents($this->config['key_file_path'])
+        );
+        $this->publicKey = new Key(
+            openssl_pkey_get_details(
+                $this->privateKey
+            )['key'],
+            self::ALG
         );
     }
 
@@ -75,7 +82,7 @@ class JWT implements JWTInterface
                 'exp' => $lifeTime,
             ],
             $this->privateKey,
-            'RS256'
+            self::ALG
         );
     }
 
@@ -92,7 +99,7 @@ class JWT implements JWTInterface
                 'sub' => self::REFRESH_SUB
             ],
             $this->privateKey,
-            'RS256'
+            self::ALG
         );
     }
 

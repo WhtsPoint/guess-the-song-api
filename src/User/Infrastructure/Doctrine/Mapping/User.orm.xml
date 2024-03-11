@@ -5,5 +5,6 @@
         <field name="username" unique="true" />
         <field name="password" column="password" />
         <embedded name="emailConfirmation" class="App\User\Domain\Entity\EmailConfirmation" />
+        <field name="roles" type="json" nullable="true" />
     </entity>
 </doctrine-mapping>

@@ -3,8 +3,9 @@
 namespace App\User\Infrastructure\Api;
 
 use App\Email\Infrastructure\Api;
+use App\User\Application\Api\EmailApiInterface;
 
-class EmailApi
+class EmailApi implements EmailApiInterface
 {
     public function __construct(
         private Api $api

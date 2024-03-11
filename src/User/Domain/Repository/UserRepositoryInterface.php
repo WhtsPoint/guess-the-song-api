@@ -5,6 +5,7 @@ namespace App\User\Domain\Repository;
 use App\User\Domain\Entity\User;
 use App\User\Domain\Exception\UserNotFoundException;
 use App\User\Domain\Representation\PublicUserData;
+use App\Utils\Domain\ValueObject\Email;
 use App\Utils\Domain\ValueObject\Uuid;
 
 interface UserRepositoryInterface
@@ -16,6 +17,7 @@ interface UserRepositoryInterface
      */
     public function getById(Uuid $id): User;
     public function isExistsWithUsername(string $username): bool;
+    public function isExistsWithEmail(Email $email): bool;
     public function delete(User $user): void;
     /**
      * @throws UserNotFoundException

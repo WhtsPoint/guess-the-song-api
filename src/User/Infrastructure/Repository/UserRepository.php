@@ -7,6 +7,7 @@ use App\User\Domain\Exception\UserNotFoundException;
 use App\User\Domain\Repository\UserRepositoryInterface;
 use App\User\Domain\Representation\PublicUserData;
 use App\Utils\Domain\Repository\BaseRepository;
+use App\Utils\Domain\ValueObject\Email;
 use App\Utils\Domain\ValueObject\Uuid;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -92,5 +93,10 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         }
 
         return $user;
+    }
+
+    public function isExistsWithEmail(Email $email): bool
+    {
+        return $this->repository->count(['emailConfirmation.email' => $email]) !== 0;
     }
 }

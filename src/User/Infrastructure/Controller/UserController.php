@@ -5,11 +5,16 @@ namespace App\User\Infrastructure\Controller;
 use App\User\Application\Dto\UserCreationDto;
 use App\User\Application\Service\UserService;
 use App\User\Domain\Exception\UserNotFoundException;
+use App\User\Domain\Exception\UserWithEmailExistsException;
 use App\User\Domain\Exception\UserWithUsernameExistsException;
 use App\User\Domain\Repository\UserRepositoryInterface;
+use App\User\Domain\Representation\AccessTokenUserData;
+use App\User\Domain\Type\Role;
 use App\User\Infrastructure\Dto\UserCreationDataDto;
 use App\User\Infrastructure\Exception\HttpUserNotFoundException;
+use App\User\Infrastructure\Exception\HttpUserWithEmailExistsException;
 use App\User\Infrastructure\Exception\HttpUserWithUsernameExistsException;
+use App\User\Infrastructure\Helper\Auth;
 use App\Utils\Domain\ValueObject\Email;
 use App\Utils\Domain\ValueObject\Uuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,7 +27,8 @@ class UserController extends AbstractController
 {
     public function __construct(
         private UserService $service,
-        private UserRepositoryInterface $repository
+        private UserRepositoryInterface $repository,
+        private Auth $auth
     ) {}
 
     #[Route(path: '/api/user', methods: 'POST')]
@@ -36,6 +42,8 @@ class UserController extends AbstractController
             ));
         } catch (UserWithUsernameExistsException) {
             throw new HttpUserWithUsernameExistsException();
+        } catch (UserWithEmailExistsException) {
+            throw new HttpUserWithEmailExistsException();
         }
 
         return $this->json($response);
@@ -54,8 +62,10 @@ class UserController extends AbstractController
     }
 
     #[Route(path: '/api/user/{id}', requirements: ['id' => Requirement::UUID_V4], methods: 'DELETE')]
-    public function deleteById(string $id): JsonResponse
+    public function deleteById(#[ValueResolver('auth_access_token')] AccessTokenUserData $userData, string $id): JsonResponse
     {
+        $this->auth->hasRolesOrException($userData, Role::Admin);
+
         try {
             $this->service->deleteById(new Uuid($id));
 

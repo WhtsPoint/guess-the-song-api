@@ -6,6 +6,7 @@ use App\User\Application\Dto\UserCreationDto;
 use App\User\Application\Dto\UserCreationResultDto;
 use App\User\Domain\Entity\User;
 use App\User\Domain\Exception\UserNotFoundException;
+use App\User\Domain\Exception\UserWithEmailExistsException;
 use App\User\Domain\Exception\UserWithUsernameExistsException;
 use App\User\Domain\Factory\UserFactory;
 use App\User\Domain\Repository\UserRepositoryInterface;
@@ -23,11 +24,16 @@ class UserService extends BaseService
 
     /**
      * @throws UserWithUsernameExistsException
+     * @throws UserWithEmailExistsException
      */
     public function create(UserCreationDto $dto): User
     {
         if ($this->repository->isExistsWithUsername($dto->username)) {
             throw new UserWithUsernameExistsException();
+        }
+
+        if ($this->repository->isExistsWithEmail($dto->email)) {
+            throw new UserWithEmailExistsException();
         }
 
         $user = $this->factory->create(
@@ -43,6 +49,7 @@ class UserService extends BaseService
 
     /**
      * @throws UserWithUsernameExistsException
+     * @throws UserWithEmailExistsException
      */
     public function createAndCommit(UserCreationDto $dto): UserCreationResultDto
     {
